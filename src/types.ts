@@ -2,6 +2,7 @@ export interface DocumentRequest {
     recordId: string;
     appToken: string;
     tableID: string;
+    idFieldName: string;
     loaiVanBanFieldName: string;
     hoSoDinhKemFieldName: string;
     creatorOpenId: string;

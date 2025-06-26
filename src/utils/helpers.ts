@@ -1,10 +1,11 @@
 import { LarkApiResponse } from '../types';
 
 export const APPROVAL_CONFIG = {
-    TEMPLATE_CODE: "YOUR_TEMPLATE_CODE_HERE",
+    TEMPLATE_CODE: "8838A66F-0F31-4D1E-80A9-9F067F0DCD21",
     WIDGET_IDS: {
-        loaiVanBan: "widget_loai_van_ban_id",
-        hoSoDinhKem: "widget_ho_so_dinh_kem_id"
+        id: "widget17509279596670001",
+        loaiVanBan: "widget17509261859370001",
+        hoSoDinhKem: "widget17509209728410001"
     }
 };
 
@@ -51,7 +52,7 @@ export class FileHelper {
         chunks.push(Buffer.from(`Content-Disposition: form-data; name="name"${CRLF}${CRLF}${fileName}${CRLF}`));
         
         chunks.push(Buffer.from(`--${boundary}${CRLF}`));
-        chunks.push(Buffer.from(`Content-Disposition: form-data; name="type"${CRLF}${CRLF}document${CRLF}`));
+        chunks.push(Buffer.from(`Content-Disposition: form-data; name="type"${CRLF}${CRLF}attachment${CRLF}`));
         
         chunks.push(Buffer.from(`--${boundary}${CRLF}`));
         chunks.push(Buffer.from(`Content-Disposition: form-data; name="content"; filename="${fileName}"${CRLF}Content-Type: ${mimeType}${CRLF}${CRLF}`));
@@ -79,27 +80,65 @@ export class LarkbaseAuthenticator {
 
     async authenticate(): Promise<string | null> {
         try {
+            console.log(`[DEBUG] Starting authentication...`);
+            console.log(`[DEBUG] App ID: ${this.config.app_id}`);
+            console.log(`[DEBUG] App Secret: ${this.config.app_secret.substring(0, 10)}...`);
+            
             const url = `${this.config.api_endpoint}/auth/v3/tenant_access_token/internal`;
+            console.log(`[DEBUG] Auth URL: ${url}`);
+            
+            const requestBody = {
+                app_id: this.config.app_id,
+                app_secret: this.config.app_secret
+            };
+            console.log(`[DEBUG] Request body: ${JSON.stringify(requestBody)}`);
+            
             const response = await fetch(url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    app_id: this.config.app_id,
-                    app_secret: this.config.app_secret
-                })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'document-approval-processor/1.0'
+                },
+                body: JSON.stringify(requestBody)
             });
 
-            const data = await response.json() as LarkApiResponse<{ tenant_access_token: string }>;
+            console.log(`[DEBUG] Response status: ${response.status}`);
+            console.log(`[DEBUG] Response headers: ${JSON.stringify(Object.fromEntries(response.headers))}`);
             
-            if (data.code === 0 && data.data?.tenant_access_token) {
-                return data.data.tenant_access_token;
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`[ERROR] HTTP error: ${response.status} - ${errorText}`);
+                return null;
+            }
+
+            const responseText = await response.text();
+            console.log(`[DEBUG] Raw response: ${responseText}`);
+            
+            let data: any;
+            try {
+                data = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error(`[ERROR] JSON parse error: ${parseError}`);
+                console.error(`[ERROR] Response text: ${responseText}`);
+                return null;
+            }
+            
+            console.log(`[DEBUG] Parsed response: ${JSON.stringify(data)}`);
+            console.log(`[DEBUG] Response code: ${data.code}`);
+            
+            if (data.code === 0 && data.tenant_access_token) {
+                const token = data.tenant_access_token;
+                console.log(`[SUCCESS] Authentication successful! Token: ${token.substring(0, 20)}...`);
+                return token;
             } else {
-                console.error(`Lỗi API: ${data.msg || data.message || 'Không xác định'}`);
+                console.error(`[ERROR] API error: Code=${data.code}, Message=${data.msg || data.message || 'Unknown'}`);
                 return null;
             }
         } catch (error: any) {
-            console.error(`Lỗi xác thực: ${error.message}`);
+            console.error(`[ERROR] Authentication exception: ${error.message}`);
+            console.error(`[ERROR] Stack trace: ${error.stack}`);
             return null;
         }
     }
 }
+
