@@ -12,7 +12,7 @@ export class ApprovalService {
         id: string,
         loaiVanBan: string,
         uploadedCodes: string[],
-        creatorOpenId: string
+        rawCreatorOpenId: any
     ): Promise<string> {
         // Validation đầu vào
 
@@ -22,6 +22,16 @@ export class ApprovalService {
 
         if (!loaiVanBan || loaiVanBan.trim() === '') {
             throw new Error('Loại văn bản không được để trống');
+        }
+
+        let creatorOpenId = '';
+        
+        if (Array.isArray(rawCreatorOpenId) && rawCreatorOpenId.length > 0 && rawCreatorOpenId[0].text) {
+            creatorOpenId = rawCreatorOpenId[0].text.toString();
+        } else if (typeof rawCreatorOpenId === 'string') {
+            creatorOpenId = rawCreatorOpenId;
+        } else if (rawCreatorOpenId) {
+            creatorOpenId = rawCreatorOpenId.toString();
         }
 
         if (!creatorOpenId || creatorOpenId.trim() === '') {
