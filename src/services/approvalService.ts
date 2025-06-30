@@ -9,23 +9,32 @@ export class ApprovalService {
     }
 
     async createApprovalInstance(
-        id: string,
-        loaiVanBan: string,
+        formData: {
+            id: string;
+            vanBanCap1: string;
+            vanBanCap2?: string;
+            vanBanCap3?: string;
+            ngayThangNamVanBan?: string;
+            phapNhanAtino?: string;
+            congTyDoiTac?: string;
+            mucDoUuTien?: string;
+            ghiChu?: string;
+            giaTriHopDong?: number;
+            giaTriThueMatBang?: number;
+        },
         uploadedCodes: string[],
         rawCreatorOpenId: any
     ): Promise<string> {
         // Validation đầu vào
-
-        if (!id || id.trim() === '') {
+        if (!formData.id || formData.id.trim() === '') {
             throw new Error('ID không được để trống');
         }
 
-        if (!loaiVanBan || loaiVanBan.trim() === '') {
-            throw new Error('Loại văn bản không được để trống');
+        if (!formData.vanBanCap1 || formData.vanBanCap1.trim() === '') {
+            throw new Error('Văn bản cấp 1 không được để trống');
         }
 
         let creatorOpenId = '';
-        
         if (Array.isArray(rawCreatorOpenId) && rawCreatorOpenId.length > 0 && rawCreatorOpenId[0].text) {
             creatorOpenId = rawCreatorOpenId[0].text.toString();
         } else if (typeof rawCreatorOpenId === 'string') {
@@ -38,32 +47,105 @@ export class ApprovalService {
             throw new Error('Creator Open ID không được để trống');
         }
 
-        console.log(`[DEBUG] Creating approval instance:`);
-        console.log(`[DEBUG] - Template code: ${APPROVAL_CONFIG.TEMPLATE_CODE}`);
-        console.log(`[DEBUG] - Loại văn bản: "${loaiVanBan}"`);
-        console.log(`[DEBUG] - Creator Open ID: ${creatorOpenId}`);
-        console.log(`[DEBUG] - Upload codes: ${JSON.stringify(uploadedCodes)}`);
-        console.log(`[DEBUG] - Widget IDs: ${JSON.stringify(APPROVAL_CONFIG.WIDGET_IDS)}`);
+        console.log(`[DEBUG] Creating approval instance with form data:`, formData);
 
-        const formWidgets = [
+        // Tạo form widgets với type union để hỗ trợ cả string và string[]
+        const formWidgets: Array<{
+            id: string;
+            type: string;
+            value: string | string[];
+        }> = [
             {
-                id: APPROVAL_CONFIG.WIDGET_IDS.id, // Thêm widget cho ID
+                id: APPROVAL_CONFIG.WIDGET_IDS.id,
                 type: "input",
-                value: id.toString()
-            },
-
-            {
-                id: APPROVAL_CONFIG.WIDGET_IDS.loaiVanBan,
-                //type: "radioV2",
-                type: "input",
-                value: loaiVanBan.toString() // Đảm bảo là string
+                value: formData.id.toString()
             },
             {
-                id: APPROVAL_CONFIG.WIDGET_IDS.hoSoDinhKem,
-                type: "attachmentV2",
-                value: uploadedCodes
+                id: APPROVAL_CONFIG.WIDGET_IDS.vanBanCap1,
+                type: "input",
+                value: formData.vanBanCap1.toString()
             }
         ];
+
+        // Thêm các trường optional
+        if (formData.vanBanCap2) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.vanBanCap2,
+                type: "input",
+                value: formData.vanBanCap2.toString()
+            });
+        }
+
+        if (formData.vanBanCap3) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.vanBanCap3,
+                type: "input",
+                value: formData.vanBanCap3.toString()
+            });
+        }
+
+        if (formData.ngayThangNamVanBan) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.ngayThangNamVanBan,
+                type: "date",
+                value: formData.ngayThangNamVanBan
+            });
+        }
+
+        if (formData.phapNhanAtino) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.phapNhanAtino,
+                type: "input",
+                value: formData.phapNhanAtino.toString()
+            });
+        }
+
+        if (formData.congTyDoiTac) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.congTyDoiTac,
+                type: "input",
+                value: formData.congTyDoiTac.toString()
+            });
+        }
+
+        if (formData.mucDoUuTien) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.mucDoUuTien,
+                type: "input",
+                value: formData.mucDoUuTien.toString()
+            });
+        }
+
+        if (formData.ghiChu) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.ghiChu,
+                type: "input",
+                value: formData.ghiChu.toString()
+            });
+        }
+
+        if (formData.giaTriHopDong !== undefined) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.giaTriHopDong,
+                type: "number",
+                value: formData.giaTriHopDong.toString()
+            });
+        }
+
+        if (formData.giaTriThueMatBang !== undefined) {
+            formWidgets.push({
+                id: APPROVAL_CONFIG.WIDGET_IDS.giaTriThueMatBang,
+                type: "number",
+                value: formData.giaTriThueMatBang.toString()
+            });
+        }
+
+        // Thêm tài liệu đính kèm - ĐÂY LÀ PHẦN QUAN TRỌNG
+        formWidgets.push({
+            id: APPROVAL_CONFIG.WIDGET_IDS.taiLieuDinhKem,
+            type: "attachmentV2",
+            value: uploadedCodes // Đây là array cho attachmentV2
+        });
 
         console.log(`[DEBUG] Form widgets:`, JSON.stringify(formWidgets, null, 2));
 

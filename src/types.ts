@@ -3,17 +3,36 @@ export interface DocumentRequest {
     appToken: string;
     tableID: string;
     idFieldName: string;
-    loaiVanBanFieldName: string;
-    hoSoDinhKemFieldName: string;
-    creatorOpenId: string;
+    vanBanCap1FieldName: string;
+    vanBanCap2FieldName?: string;
+    vanBanCap3FieldName?: string;
+    ngayThangNamVanBanFieldName?: string;
+    phapNhanAtinoFieldName?: string;
+    congTyDoiTacFieldName?: string;
+    mucDoUuTienFieldName?: string;
+    ghiChuFieldName?: string;
+    giaTriHopDongFieldName?: string;
+    giaTriThueMatBangFieldName?: string;
+    taiLieuDinhKemFieldName: string;
+    creatorOpenId: any;
 }
+
 
 export interface ProcessResult {
     success: boolean;
     instanceCode?: string;
     message: string;
     documentInfo?: {
-        loaiVanBan: string;
+        vanBanCap1: string;
+        vanBanCap2?: string;
+        vanBanCap3?: string;
+        phapNhanAtino?: string;
+        congTyDoiTac?: string;
+        mucDoUuTien?: string;
+        ghiChu?: string;
+        giaTriHopDong?: number;
+        giaTriThueMatBang?: number;
+        ngayThangNamVanBan?: string;
     };
     uploadedCodes: string[];
     documentCount: number;

@@ -4,10 +4,21 @@ export const APPROVAL_CONFIG = {
     TEMPLATE_CODE: "8838A66F-0F31-4D1E-80A9-9F067F0DCD21",
     WIDGET_IDS: {
         id: "widget17509279596670001",
-        loaiVanBan: "widget17509261859370001",
-        hoSoDinhKem: "widget17509209728410001"
+        vanBanCap1: "widget17509261859370001", 
+        vanBanCap2: "widget17510785727680001",
+        vanBanCap3: "widget17510785743940001",
+        ngayThangNamVanBan: "widget17510781139170001",
+        phapNhanAtino: "widget17510781457140001",
+        congTyDoiTac: "widget17510781891140001",
+        mucDoUuTien: "widget17510782210020001",
+        ghiChu: "widget17510782265760001",
+        giaTriHopDong: "widget17510784042570001",
+        giaTriThueMatBang: "widget17510784061840001",
+        taiLieuDinhKem: "widget17509209728410001"
     }
 };
+
+
 
 export const SUPPORTED_DOCUMENT_TYPES = ['pdf', 'doc', 'docx'];
 
