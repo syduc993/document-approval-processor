@@ -127,7 +127,7 @@ export class ApprovalService {
         if (formData.giaTriHopDong !== undefined) {
             formWidgets.push({
                 id: APPROVAL_CONFIG.WIDGET_IDS.giaTriHopDong,
-                type: "number",
+                type: "amount",
                 value: formData.giaTriHopDong.toString()
             });
         }
@@ -135,7 +135,7 @@ export class ApprovalService {
         if (formData.giaTriThueMatBang !== undefined) {
             formWidgets.push({
                 id: APPROVAL_CONFIG.WIDGET_IDS.giaTriThueMatBang,
-                type: "number",
+                type: "amount",
                 value: formData.giaTriThueMatBang.toString()
             });
         }

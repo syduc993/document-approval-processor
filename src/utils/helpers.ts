@@ -12,11 +12,12 @@ export const APPROVAL_CONFIG = {
         congTyDoiTac: "widget17510781891140001",
         mucDoUuTien: "widget17510782210020001",
         ghiChu: "widget17510782265760001",
-        giaTriHopDong: "widget17510784042570001",
-        giaTriThueMatBang: "widget17510784061840001",
+        giaTriHopDong: "widget17525741108620001",
+        giaTriThueMatBang: "widget17525741130580001",
         taiLieuDinhKem: "widget17509209728410001"
     }
 };
+
 
 
 
